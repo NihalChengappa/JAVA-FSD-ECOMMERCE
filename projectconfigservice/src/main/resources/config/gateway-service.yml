@@ -1,0 +1,49 @@
+server:
+  port: 8060
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka/
+  instance:
+    preferIpAddress: true
+logging:
+  pattern: 
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+              
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+      - id: login-service
+        uri: lb://login-service
+        predicates:
+        - Path=/auth/**
+        filters:
+        - RewritePath=/login/(?<path>.*), /$\{path}
+      - id: productandcategory-service
+        uri: lb://productandcategory-service
+        predicates:
+        - Path=/productandcategory/**
+        filters:
+        - AuthenticationFilter
+        - RewritePath=/productandcategory/(?<path>.*), /$\{path}
+      - id: openapi
+        uri: http://localhost:${server.port}
+        predicates:
+           - Path=/api-docs/**
+        filters:
+           - RewritePath=/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+      
+springdoc:
+  swagger-ui:
+    urls:
+       
+      - url: /api-docs/auth
+        name: Login/Register
+        
+      - url: /api-docs/productandcategory
+        name: Product-Category

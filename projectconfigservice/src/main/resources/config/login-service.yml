@@ -1,0 +1,39 @@
+server:
+  port: 8091
+
+eureka:
+  instance:
+       preferIpAddress: true
+  
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka/
+      
+logging:
+  pattern: 
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bydb
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  management:
+    security:
+      enabled: true
+    endpoints:
+      web:
+        exposure:
+          include: "*"
+ 
+
+springdoc:
+  
+  cache:
+    disabled: true
