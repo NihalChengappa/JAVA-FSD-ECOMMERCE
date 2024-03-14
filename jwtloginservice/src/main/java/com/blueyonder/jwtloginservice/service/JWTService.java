@@ -1,10 +1,12 @@
 package com.blueyonder.jwtloginservice.service;
 
 import java.security.Key;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
@@ -24,8 +26,9 @@ public class JWTService {
     }
 
 
-    public String generateToken(String userName) {
+    public String generateToken(String userName, Collection<? extends GrantedAuthority> collection) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role", collection);
         return createToken(claims, userName);
     }
 

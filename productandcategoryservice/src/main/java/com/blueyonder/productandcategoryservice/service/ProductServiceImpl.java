@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.blueyonder.productandcategoryservice.entities.Category;
 import com.blueyonder.productandcategoryservice.entities.Product;
 import com.blueyonder.productandcategoryservice.exceptions.ProductNotFoundException;
 import com.blueyonder.productandcategoryservice.repositories.ProductRepository;
@@ -31,10 +33,20 @@ public class ProductServiceImpl implements ProductService{
 		productRepository.save(product);
 	}
 
+	@Transactional
 	@Override
 	public void deleteProduct(Integer id) {
 		// TODO Auto-generated method stub
-		productRepository.deleteById(id);
+		Optional<Product>product = productRepository.findById(id);
+
+		 // Remove associations with categories
+        for (Category category : product.get().getCategoryList()) {
+        	category.getProductList().remove(product.get());
+            product.get().getCategoryList().remove(product.get());
+        }
+
+        // Delete the product
+        productRepository.delete(product.get());
 	}
 
 	@Override

@@ -21,7 +21,6 @@ import com.blueyonder.productandcategoryservice.entities.Category;
 import com.blueyonder.productandcategoryservice.exceptions.CategoryNotFoundException;
 import com.blueyonder.productandcategoryservice.service.CategoryService;
 
-import jakarta.persistence.criteria.CriteriaBuilder.Case;
 
 @RestController
 //@CrossOrigin("*")

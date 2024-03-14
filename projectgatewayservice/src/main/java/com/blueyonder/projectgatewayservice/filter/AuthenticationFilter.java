@@ -38,7 +38,15 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     authHeaders = authHeaders.substring(7);
                 }
                 try {
+//                	System.out.println(authHeaders);
                     jwtService.validateToken(authHeaders);
+//                    System.out.println(exchange.getRequest());
+                    System.out.println(routeValidator.isAdminSecured.test(exchange.getRequest()));
+                    System.out.println(jwtService.getAuthority(authHeaders));
+                    if(!jwtService.getAuthority(authHeaders).equals("ROLE_ADMIN") && routeValidator.isAdminSecured.test(exchange.getRequest())) {
+                    	System.out.println(3333);
+                    	throw new RuntimeException();
+                    }
 
                 } catch (Exception e) {
                     System.out.println("invalid access...!");

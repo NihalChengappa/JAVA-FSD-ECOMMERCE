@@ -23,5 +23,6 @@ public class GatewayConfig {
 
         return new CorsWebFilter(source);
     }
+    
 }
 

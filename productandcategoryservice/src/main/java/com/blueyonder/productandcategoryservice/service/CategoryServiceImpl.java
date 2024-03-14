@@ -7,8 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.blueyonder.productandcategoryservice.entities.Category;
+import com.blueyonder.productandcategoryservice.entities.Product;
 import com.blueyonder.productandcategoryservice.exceptions.CategoryNotFoundException;
 import com.blueyonder.productandcategoryservice.repositories.CategoryRepository;
 
@@ -44,6 +46,7 @@ public class CategoryServiceImpl implements CategoryService{
 		
 	}
 
+	@Transactional
 	@Override
 	public void deleteCategory(Integer id) throws CategoryNotFoundException{
 		// TODO Auto-generated method stub
@@ -51,7 +54,13 @@ public class CategoryServiceImpl implements CategoryService{
 			logger.error("categoryid:"+id+" does not exist");
 			throw new CategoryNotFoundException();
 		}
+		Optional<Category>category = categoryRepository.findById(id);
+
+        // Remove associations with categories
+		category.get().getProductList().clear();
+		categoryRepository.save(category.get());
 		categoryRepository.deleteById(id);
+		
 	}
 
 	@Override

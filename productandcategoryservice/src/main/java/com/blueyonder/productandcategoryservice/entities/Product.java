@@ -23,7 +23,7 @@ public class Product {
 	private String productName;
 	private Integer productPrice;
 	private String productDescription;
-	@ManyToMany(mappedBy = "productList",fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+	@ManyToMany(mappedBy = "productList",fetch = FetchType.LAZY)
 	@JsonIgnoreProperties("productList")
 	private Set<Category>categoryList;
 }
