@@ -8,10 +8,10 @@ import com.blueyonder.productandcategoryservice.exceptions.ProductNotFoundExcept
 public interface ProductService {
 	public void addProduct(Product product);
 	public void updateProduct(Product product) throws ProductNotFoundException;
-	public void deleteProduct(Integer id);
+	public void deleteProduct(Integer id) throws ProductNotFoundException;
 	public Product findProductById(Integer id) throws ProductNotFoundException;
 	public Set<Product> findAllProducts();
-	public Set<Product> findAllProductsByName(String value);
-	public Set<Product> findAllProductsByDescription(String value);
-	public Set<Product> findAllProductsByPrice(Integer value);
+	public Set<Product> findAllProductsByName(String value) throws ProductNotFoundException;
+	public Set<Product> findAllProductsByDescription(String value) throws ProductNotFoundException;
+	public Set<Product> findAllProductsByPrice(Integer value) throws ProductNotFoundException;
 }

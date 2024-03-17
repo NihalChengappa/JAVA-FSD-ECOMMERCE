@@ -18,11 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import com.blueyonder.productandcategoryservice.entities.Category;
 import com.blueyonder.productandcategoryservice.entities.Product;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProductControllerE2ETest {
+public class CategoryControllerE2ETest {
     @Autowired
     private TestRestTemplate restTemplate;
     
@@ -30,22 +31,22 @@ public class ProductControllerE2ETest {
     
     @Test
     @Order(5)
-    public void testGetProducts_Success() {
-        String requestUrl = "/ecommerceapp/api/v1/product/getproducts";
+    public void testGetCategories_Success() {
+        String requestUrl = "/ecommerceapp/api/v1/category/getcategories";
         
-        ResponseEntity<Set<Product>> responseEntity = restTemplate.exchange(
+        ResponseEntity<Set<Category>> responseEntity = restTemplate.exchange(
             requestUrl,
             HttpMethod.GET,
             null,
-            new ParameterizedTypeReference<Set<Product>>() {}
+            new ParameterizedTypeReference<Set<Category>>() {}
         );
         
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
     @Test
     @Order(2)
-    public void testGetProducts_ByName() {
-        String requestUrl = "/ecommerceapp/api/v1/product/getproductbyfield?field=name&value=Dumbell";
+    public void testGetCategories_ByName() {
+        String requestUrl = "/ecommerceapp/api/v1/category/getcategorybyfield?field=name&value=Electronics";
         
         ResponseEntity<Object> responseEntity = restTemplate.exchange(
             requestUrl,
@@ -58,8 +59,8 @@ public class ProductControllerE2ETest {
     }
     @Test
     @Order(3)
-    public void testGetProducts_ById() {
-        String requestUrl = "/ecommerceapp/api/v1/product/getproductbyfield?field=id&value=10";
+    public void testGetCategories_ById() {
+        String requestUrl = "/ecommerceapp/api/v1/product/getproductbyfield?field=id&value=2";
         
         ResponseEntity<Product> responseEntity = restTemplate.exchange(
             requestUrl,
@@ -72,8 +73,8 @@ public class ProductControllerE2ETest {
     }
     @Test
     @Order(4)
-    public void testGetProducts_ByDescription() {
-        String requestUrl = "/ecommerceapp/api/v1/product/getproductbyfield?field=description&value=Logitech Keyboard";
+    public void testGetcategory_ByDescription() {
+        String requestUrl = "/ecommerceapp/api/v1/category/getcategorybyfield?field=description&value=Workout equipment";
         
         ResponseEntity<Object> responseEntity = restTemplate.exchange(
             requestUrl,
@@ -86,41 +87,38 @@ public class ProductControllerE2ETest {
     }
 //    @Test
 //    @Order(1)
-//    public void testAddProducts() {
-//        String requestUrl = "/ecommerceapp/api/v1/product/addproduct";
+//    public void testAddCategory() {
+//        String requestUrl = "/ecommerceapp/api/v1/category/addcategory";
 //        
-//        Product product = new Product();
-//        product.setProductName("test");
-//        product.setProductPrice(20);
-//        product.setProductDescription("test product");
+//        Category category = new Category();
+//        category.setName("test");
+//        category.setCategoryDescription("test");
 //        HttpHeaders headers = new HttpHeaders();
 //        headers.setContentType(MediaType.APPLICATION_JSON);
 //
-//        HttpEntity<Product> requestEntity = new HttpEntity<>(product, headers);
+//        HttpEntity<Category> requestEntity = new HttpEntity<>(category, headers);
 //
-//        ResponseEntity<Product> responseEntity = restTemplate.exchange(
+//        ResponseEntity<Category> responseEntity = restTemplate.exchange(
 //            requestUrl,
 //            HttpMethod.POST,
 //            requestEntity,
-//            new ParameterizedTypeReference<Product>() {}
+//            new ParameterizedTypeReference<Category>() {}
 //        );
-//        id=responseEntity.getBody().getProductId();
 //        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 //    }
     
-//    @Test
-//    @Order(6)
-//    public void testDeleteProducts() {
-////    	System.out.println(Integer.toString(id));
-//        String requestUrl = "/ecommerceapp/api/v1/product/deleteproduct/19";
-//        System.out.println(requestUrl);
-//        ResponseEntity<String> responseEntity = restTemplate.exchange(
-//            requestUrl,
-//            HttpMethod.DELETE,
-//            null,
-//            new ParameterizedTypeReference<String>() {}
-//        );
-//        
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//    }
+    @Test
+    @Order(6)
+    public void testDeleteCategory() {
+//    	System.out.println(Integer.toString(id));
+        String requestUrl = "/ecommerceapp/api/v1/category/deletecategory/3";
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+            requestUrl,
+            HttpMethod.DELETE,
+            null,
+            new ParameterizedTypeReference<String>() {}
+        );
+        
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
 }

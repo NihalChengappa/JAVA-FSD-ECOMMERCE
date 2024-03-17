@@ -32,8 +32,8 @@ public class CategoryController {
 
 	@PostMapping(value="/addcategory",consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Category> addNewCategory(@RequestBody Category category) {
-		categoryService.addCategory(category);
-		return new ResponseEntity<Category>(category,HttpStatus.CREATED);
+		Category newCategory= categoryService.addCategory(category);
+		return new ResponseEntity<Category>(newCategory,HttpStatus.CREATED);
 	}
 	@PutMapping("/updatecategory/{id}")
 	public ResponseEntity<Category> updateCategory(@RequestBody Category category,@PathVariable("id") Integer id) throws CategoryNotFoundException {

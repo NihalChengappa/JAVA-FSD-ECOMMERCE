@@ -2,16 +2,20 @@ import React, { useEffect, useState } from 'react';
 import useVantaNetEffect from './NetEffect';
 import axios from 'axios';
 import Select from 'react-select';
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 function CategoryForm() {
     const [name,setName]=useState('');
     const [description,setDescription]=useState('');
+    const [loading, setLoading] = useState(true);
     const vantaRef = useVantaNetEffect();
     const [products, setProducts] = useState([]);
     const [selectProducts, setSelectProducts] = useState([]);
     
     useEffect(() => {
-        getProducts();
+        getProducts().then(() => {
+            setLoading(false);
+        });
     }, []);
 
     const getProducts = async () => {
@@ -71,7 +75,19 @@ function CategoryForm() {
 
     return (
         <>
-            <div ref={vantaRef} className="vanta-effect" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>
+        <div ref={vantaRef} className="vanta-effect" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>
+        {loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999 }}>
+                    <ScaleLoader
+                        loading={loading}
+                        size={150}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                    />
+                </div>
+            ) : (
+                <>
+            
             <form onSubmit={handleSubmit} className="container">
                 <div className="col-md-6 offset-3 justify-content-center p-5 card-body row mt-4 border rounded" style={{background:"#e3f2fd"}}>
                     <div className="form-group p-3 ">
@@ -99,6 +115,8 @@ function CategoryForm() {
 </form>
 
         </>
+            )}
+            </>
     );
 }
 

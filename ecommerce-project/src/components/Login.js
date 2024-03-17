@@ -3,11 +3,12 @@ import * as THREE from 'three';
 import CLOUDS from 'vanta/dist/vanta.clouds.min.js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import ErrorAlert from './ErrorAlert';
 
 function Login({ setAuth ,setR}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const[emsg,setEmsg]=useState('');
   const [vantaEffect, setVantaEffect] = useState(null);
   const backgroundRef = useRef(null);
   const navigate=useNavigate();
@@ -43,7 +44,7 @@ function Login({ setAuth ,setR}) {
     try {
       const response = await axios.post('http://localhost:8060/auth/login', loginObj);
       if (response.data && response.data === `Invalid Access`) {
-        setError(response.data);
+        setEmsg("Incorrect Username or Password");
       } else {
         let data = response.data.split(',');
         let token=data[0];
@@ -56,9 +57,15 @@ function Login({ setAuth ,setR}) {
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError('An error occurred during login');
-    }
-  };
+      setEmsg('Server error');
+  }
+  finally{
+    setTimeout(() => {
+      setEmsg('');
+  }, 3000);
+      return;
+}
+  }
 
   return (
     <div
@@ -72,12 +79,7 @@ function Login({ setAuth ,setR}) {
             <div className="col-12 col-md-6 bsb-tpl-bg-platinum">
             <div className="d-flex flex-column justify-content-between h-50 p-3 p-md-4 p-xl-5">
                             <img className="img-fluid rounded mx-auto my-4" loading="lazy" src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" width="245" height="80" />
-                            {error && 
-                            <div className="col-12 alert alert-danger">{error}
-                            
-                            </div>}
-                            
-                            
+                            {emsg && <ErrorAlert msg={emsg}/>}
                             </div>
             </div>
             <div className="col-12 col-md-6 bsb-tpl-bg-lotion">

@@ -6,7 +6,7 @@ import com.blueyonder.productandcategoryservice.entities.Category;
 import com.blueyonder.productandcategoryservice.exceptions.CategoryNotFoundException;
 
 public interface CategoryService {
-	public void addCategory(Category category);
+	public Category addCategory(Category category);
 	public void updateCategory(Category category) throws CategoryNotFoundException;
 	public void deleteCategory(Integer id) throws CategoryNotFoundException;
 	public Category findCategoryById(Integer id) throws CategoryNotFoundException;

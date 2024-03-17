@@ -14,4 +14,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer>{
 	public Set<Product> findAllByProductName(String value);
 	public Set<Product> findAllByProductDescription(String value);
 	public Set<Product> findAllByProductPrice(Integer value);
+	public boolean existsByProductName(String productName);
+	public boolean existsByProductDescription(String productDescription);
+	public boolean existsByProductPrice(Integer value);
 }

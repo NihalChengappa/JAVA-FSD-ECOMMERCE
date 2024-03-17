@@ -2,17 +2,21 @@ import React, { useEffect, useState } from 'react';
 import useVantaNetEffect from './NetEffect';
 import axios from 'axios';
 import Select from 'react-select';
+import ScaleLoader from 'react-spinners/ScaleLoader';
 
 function ProductForm() {
     const [name,setName]=useState('');
     const [description,setDescription]=useState('');
     const[price,setPrice]=useState(0);
     const vantaRef = useVantaNetEffect();
+    const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     
     useEffect(() => {
-        getCategories();
+        getCategories().then(() => {
+            setLoading(false);
+        });;
     }, []);
 
     const getCategories = async () => {
@@ -74,7 +78,18 @@ function ProductForm() {
 
     return (
         <>
-            <div ref={vantaRef} className="vanta-effect" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>
+        <div ref={vantaRef} className="vanta-effect" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>
+        {loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999 }}>
+                    <ScaleLoader
+                        loading={loading}
+                        size={150}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                    />
+                </div>
+            ) : (
+                <>
             <form onSubmit={handleSubmit}>
             <div className="col-md-6 offset-3 justify-content-center p-5 card-body row mt-4 border rounded" style={{background:"#e3f2fd"}}>
                     <div className="form-group p-3">
@@ -104,7 +119,9 @@ function ProductForm() {
                         <button type="submit" className="btn btn-light">Add Product</button>
                     </div>
                     </div>
-            </form>
+                </form>
+                </>
+            )}
         </>
     );
 }

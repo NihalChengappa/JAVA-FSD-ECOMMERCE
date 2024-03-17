@@ -13,6 +13,7 @@ import com.blueyonder.productandcategoryservice.entities.Category;
 import com.blueyonder.productandcategoryservice.entities.Product;
 import com.blueyonder.productandcategoryservice.exceptions.CategoryNotFoundException;
 import com.blueyonder.productandcategoryservice.repositories.CategoryRepository;
+import com.netflix.infix.lang.infix.antlr.EventFilterParser.null_predicate_return;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
@@ -21,9 +22,9 @@ public class CategoryServiceImpl implements CategoryService{
 	CategoryRepository categoryRepository;
 	Logger logger=LoggerFactory.getLogger(CategoryService.class);
 	@Override
-	public void addCategory(Category category) {
+	public Category addCategory(Category category) {
 		// TODO Auto-generated method stub
-		categoryRepository.save(category);
+		return categoryRepository.save(category);
 	}
 	
 	@Override
@@ -57,8 +58,10 @@ public class CategoryServiceImpl implements CategoryService{
 		Optional<Category>category = categoryRepository.findById(id);
 
         // Remove associations with categories
-		category.get().getProductList().clear();
-		categoryRepository.save(category.get());
+		if(category.get().getProductList()!=null) {
+			category.get().getProductList().clear();
+			categoryRepository.save(category.get());
+		}
 		categoryRepository.deleteById(id);
 		
 	}

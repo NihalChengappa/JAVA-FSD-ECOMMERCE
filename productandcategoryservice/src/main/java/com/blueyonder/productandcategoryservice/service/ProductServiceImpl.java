@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.blueyonder.productandcategoryservice.entities.Category;
 import com.blueyonder.productandcategoryservice.entities.Product;
+import com.blueyonder.productandcategoryservice.exceptions.CategoryNotFoundException;
 import com.blueyonder.productandcategoryservice.exceptions.ProductNotFoundException;
 import com.blueyonder.productandcategoryservice.repositories.ProductRepository;
 
@@ -35,23 +36,32 @@ public class ProductServiceImpl implements ProductService{
 
 	@Transactional
 	@Override
-	public void deleteProduct(Integer id) {
+	public void deleteProduct(Integer id) throws ProductNotFoundException {
 		// TODO Auto-generated method stub
 		Optional<Product>product = productRepository.findById(id);
+		
+		if(!productRepository.existsById(id)) {
+//			logger.error("categoryid:"+id+" does not exist");
+			throw new ProductNotFoundException();
+		}
+		
+		if(product.get().getCategoryList()!=null) {
+	        for (Category category : product.get().getCategoryList()) {
+	        	category.getProductList().remove(product.get());
+	            product.get().getCategoryList().remove(product.get());
+	        }
+		}
 
-		 // Remove associations with categories
-        for (Category category : product.get().getCategoryList()) {
-        	category.getProductList().remove(product.get());
-            product.get().getCategoryList().remove(product.get());
-        }
-
-        // Delete the product
         productRepository.delete(product.get());
 	}
 
 	@Override
 	public Product findProductById(Integer id) throws ProductNotFoundException {
 		// TODO Auto-generated method stub
+		if(!productRepository.existsById(id)) {
+//			logger.error("category description:"+value+" does not exist");
+			throw new ProductNotFoundException();
+		}
 		Optional<Product> product=productRepository.findById(id);
 		if(product.isPresent()) {
 			return product.get();
@@ -68,20 +78,29 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public Set<Product> findAllProductsByName(String value) {
-		// TODO Auto-generated method stub
+	public Set<Product> findAllProductsByName(String value) throws ProductNotFoundException {
+		if(!productRepository.existsByProductName(value)) {
+//			logger.error("category description:"+value+" does not exist");
+			throw new ProductNotFoundException();
+		}
 		return productRepository.findAllByProductName(value);
 	}
 
 	@Override
-	public Set<Product> findAllProductsByDescription(String value) {
-		// TODO Auto-generated method stub
+	public Set<Product> findAllProductsByDescription(String value) throws ProductNotFoundException {
+		if(!productRepository.existsByProductDescription(value)) {
+//			logger.error("category description:"+value+" does not exist");
+			throw new ProductNotFoundException();
+		}
 		return productRepository.findAllByProductDescription(value);
 	}
 
 	@Override
-	public Set<Product> findAllProductsByPrice(Integer value) {
-		// TODO Auto-generated method stub
+	public Set<Product> findAllProductsByPrice(Integer value) throws ProductNotFoundException {
+		if(!productRepository.existsByProductPrice(value)) {
+//			logger.error("category description:"+value+" does not exist");
+			throw new ProductNotFoundException();
+		}
 		return productRepository.findAllByProductPrice(value);
 	}
 

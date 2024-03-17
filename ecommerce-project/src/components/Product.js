@@ -87,6 +87,7 @@ function Product() {
                     <option selected >Select Field</option>
                     <option value="name">Name</option>
                     <option value="description">Description</option>
+                    <option value="price">Price</option>
                     <option value="id">ID</option>
                 </select>
                 <div className="input-group">
