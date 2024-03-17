@@ -22,6 +22,7 @@ function DeleteCategory(){
                 }
             });
             console.log('Category Delete Successfully:', response.data);
+            setSelectedCategory("");
         } catch (error) {
             console.error('Error Deleting Category:', error);
         }
@@ -45,10 +46,9 @@ function DeleteCategory(){
     return(
         <>
             <div ref={vantaRef} className="vanta-effect" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>
-            <div className="container d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-row">
-                        <div className="form-group col-md-6" style={{display:"flex",marginBottom:"50px",width:"600px", alignItems: "center"}}>
+                <div className="col-md-6 offset-3 justify-content-center p-5 card-body row border rounded" style={{background:"#e3f2fd", marginTop:"180px"}}>
+                    <div className="form-group p-3">
                             <label htmlFor="categoryname" style={{width:"200px"}}>Category Name</label>
                             <select className="form-select " aria-label="Default select example" onChange={(e)=>{setSelectedCategory(e.target.value)}}>
                                 <option selected>Choose Category</option>
@@ -56,11 +56,13 @@ function DeleteCategory(){
                                     <option key={category.categoryId} value={category.categoryId} >{category.name}</option>
                                 ))}
                             </select>
-                        </div>
                     </div>
-                    <button type="submit" className="btn btn-primary" >Delete Category</button>
+                    <div className="col-md-6 offset-3">
+                    <button type="submit" className="btn btn-light" >Delete Category</button>
+                    </div>
+                    </div>
                 </form>
-            </div>
+            
         </>
     )
 }

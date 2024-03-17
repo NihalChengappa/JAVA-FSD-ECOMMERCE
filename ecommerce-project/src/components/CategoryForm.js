@@ -24,6 +24,7 @@ function CategoryForm() {
             });
             setProducts(response.data);
         } catch (error) {
+            window.location.href="/logout";
             console.error('Error fetching products:', error);
         }
     };
@@ -50,6 +51,9 @@ function CategoryForm() {
                 console.log('Category linked to product:', linkResponse.data);
             }
             console.log('Category added and linked to products:', response.data);
+            setName('');
+            setDescription('');
+            setSelectProducts('');
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -68,20 +72,18 @@ function CategoryForm() {
     return (
         <>
             <div ref={vantaRef} className="vanta-effect" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>
-            <form onSubmit={handleSubmit}>
-                <div className="form-row">
-                    <div className="form-group col-md-6">
+            <form onSubmit={handleSubmit} className="container">
+                <div className="col-md-6 offset-3 justify-content-center p-5 card-body row mt-4 border rounded" style={{background:"#e3f2fd"}}>
+                    <div className="form-group p-3 ">
                         <label htmlFor="categoryname">Category Name</label>
-                        <input type="text" className="form-control" id="categoryname" placeholder="Enter Category Name" onChange={(e)=>{setName(e.target.value)}}/>
+                        <input type="text" className="form-control" value={name} id="categoryname" placeholder="Enter Category Name" onChange={(e) => setName(e.target.value)} />
                     </div>
-                    <div className="form-group col-md-6">
+                    <div className="form-group p-3">
                         <label htmlFor="categorydescription">Category Description</label>
-                        <input type="text" className="form-control" id="categorydescription" onChange={(e)=>{setDescription(e.target.value)}} placeholder="Enter Category Description" />
+                        <input type="text" className="form-control" value={description} id="categorydescription" onChange={(e) => setDescription(e.target.value)} placeholder="Enter Category Description" />
                     </div>
-                </div>
-                <div className="form-row align-items-center">
-                    <div className="col-auto">
-                        <label className="mr-sm-2" htmlFor="inlineFormCustomSelect">Product to link</label>
+                    <div className="form-group p-3">
+                        <label htmlFor="inlineFormCustomSelect">Product to link</label>
                         <Select
                             isMulti
                             options={productOptions}
@@ -89,11 +91,13 @@ function CategoryForm() {
                             classNamePrefix="select"
                             onChange={handleProductChange}
                         />
-                        {console.log(selectProducts)}
                     </div>
-                </div>
-                <button type="submit" className="btn btn-primary">Sign in</button>
-            </form>
+                    <div className="col-md-6 offset-3">
+                        <button type="submit" className="btn btn-light">Add Category</button>
+                    </div>
+            </div>
+</form>
+
         </>
     );
 }

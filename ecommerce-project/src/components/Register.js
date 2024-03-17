@@ -2,14 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as THREE from 'three';
 import CLOUDS from 'vanta/dist/vanta.clouds.min.js';
+import ErrorAlert from './ErrorAlert';
+import SuccessAlert from './SuccessAlert';
 
 function Register() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
+    const[emsg,setEmsg]=useState('');
+    const[smsg,setSmsg]=useState('');
     const [password2Valid, setPassword2Valid] = useState(false);
-    const [error, setError] = useState('');
     const [vantaEffect, setVantaEffect] = useState(null);
     const backgroundRef = useRef(null);
 
@@ -40,7 +43,7 @@ function Register() {
         e.preventDefault();
         console.log(username, email, password, password2)
         if (password!=password2) {
-            setError('Passwords do not match');
+            setEmsg('Passwords do not match');
             return;
         }
         try {
@@ -50,8 +53,26 @@ function Register() {
                 password
             });
             console.log(response.data);
+            setUsername("");
+            setEmail("");
+            setPassword("");
+            setPassword2("");
+            setSmsg("Registration was successfull");
+            setTimeout(() => {
+            setSmsg('');
+        }, 3000);
         } catch (error) {
-            setError('User already exists');
+            console.log(error.status)
+            if(error.response.status===403){
+            setEmsg('User already exists');
+        }
+        else {
+            setEmsg("Server error");
+        }
+        setTimeout(() => {
+            setEmsg('');
+        }, 3000);
+            return;
         }
     };
 
@@ -66,12 +87,9 @@ function Register() {
                     <div className="row">
                         <div className="col-12 col-md-6 bsb-tpl-bg-platinum">
                             <div className="d-flex flex-column justify-content-between h-50 p-3 p-md-4 p-xl-5">
-                            <img class="img-fluid rounded mx-auto my-4" loading="lazy" src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" width="245" height="80" />
-                            {error && 
-                            <div className="col-12 alert alert-danger">{error}
-                            
-                            </div>}
-                            
+                            <img className="img-fluid rounded mx-auto my-4" loading="lazy" src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" width="245" height="80" />
+                            {emsg && <ErrorAlert msg={emsg}/>}
+                            {smsg && <SuccessAlert msg={smsg}/>}
                             
                             </div>
                         </div>

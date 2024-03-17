@@ -56,18 +56,6 @@ public class AuthServiceImpl implements AuthService{
 					roles.add(adminRole);
 
 					break;
-				case "child":
-					Role childRole = roleRepository.findByName(ERole.ROLE_CHILD)
-							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-					roles.add(childRole);
-
-					break;
-				case "parent":
-					Role parentRole = roleRepository.findByName(ERole.ROLE_PARENT)
-							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-					roles.add(parentRole);
-
-					break;
 				default:
 					Role userRole = roleRepository.findByName(ERole.ROLE_USER)
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));

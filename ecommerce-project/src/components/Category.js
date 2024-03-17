@@ -1,17 +1,28 @@
 import React, { useEffect, useState, useRef } from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import useVantaNetEffect from './NetEffect';
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 function Category() {
     const [categories, setCategories] = useState([]);
     const [searchValue,setSearchValue]=useState('');
     const [searchField,setSearchField]=useState('');
+    const [loading, setLoading] = useState(true);
     const vantaRef = useVantaNetEffect();
+    const role=localStorage.getItem('role');
+    const navigate = useNavigate();
+
+    const viewProds=(cat,prods,catdes)=>{
+        navigate(`/category/${cat}`,{state:{prods:prods,catdesc:catdes}});
+    }
 
     useEffect(() => {
-        fetchCategories();
+        fetchCategories().then(() => {
+            setLoading(false);
+        });
     }, []);
+    
 
     
 
@@ -23,6 +34,7 @@ function Category() {
                     Authorization: `Bearer ${token}`
                 }
             });
+            console.log(response.data)
             setCategories(response.data);
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -52,16 +64,24 @@ function Category() {
         }
     };
 
-    return (
+    return  (
         <div>
+            <div style={{ display: loading ? 'flex' : 'none', justifyContent: 'center', alignItems: 'center', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999 }}>
+                <ScaleLoader
+                    loading={loading}
+                    size={150}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                />
+                </div>
             <div style={{textAlign: "center"}}>
-            <Link to="add-category" className="btn btn-outline-success">Add Category</Link>
-            <Link to="update-category" className="btn btn-outline-warning">Update Category</Link>
-                <Link to="delete-category" className="btn btn-outline-danger">Delete Category</Link>
+            {role==='[ROLE_ADMIN]' && <Link to="add-category" className="btn btn-outline-success">Add Category</Link>}
+            {role==='[ROLE_ADMIN]' &&<Link to="update-category" className="btn btn-outline-warning">Update Category</Link>}
+                {role==='[ROLE_ADMIN]' &&<Link to="delete-category" className="btn btn-outline-danger">Delete Category</Link>}
             </div>
             <div style={{ display: 'flex' }}>
                 <select className="form-select" aria-label="Default select example" onChange={(e)=>setSearchField(e.target.value)} style={{width:"150px"}}>
-                    <option selected >Select Field</option>
+                    <option value ="" >Select Field</option>
                     <option value="name">Name</option>
                     <option value="description">Description</option>
                     <option value="id">ID</option>
@@ -79,16 +99,24 @@ function Category() {
             </div>
             
             <div ref={vantaRef} className="vanta-effect" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>
-            <div className="row row-cols-1 row-cols-md-4 g-4">
+            <div className="row row-cols-1 row-cols-md-4 g-4 mt-1">
                 {categories.map((category, index) => (
                     <div className="col" key={index}>
                         <div className="card bg-info">
-                            <img src={`https://medicaldialogues.in/h-upload/2022/01/21/168768-category.webp`} className="card-img-top" alt={category.name} />
+                            <img src={`https://source.unsplash.com/featured/?${encodeURIComponent(category.name)}`} width="250px" height="250px" className="card-img-top" alt={category.name} />
                             <div className="card-body">
-                                <h5 className="card-title">{category.name}</h5>
-                                <p className="card-text">{category.categoryDescription}</p>
-                                <a href={`https://medicaldialogues.in/h-upload/2022/01/21/168768-category.webp`} className="btn btn-primary">View Products</a>
+                    <div className="row">
+                        <div className="col-md-9">
+                            <h3 className="card-title">{category.name}</h3>
+                            <hr />
+                            <p className="card-text"><span className="description">{category.categoryDescription}</span></p>
+                            <div className="text-end">
+                                <button className="btn btn-primary" onClick={() => viewProds(category.name, category.productList ,category.categoryDescription)}>View Products</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
                         </div>
                     </div>
                 ))}

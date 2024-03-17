@@ -2,25 +2,30 @@ import React, { useEffect, useState, useRef } from 'react';
 import * as THREE from 'three';
 import CLOUDS from 'vanta/dist/vanta.clouds.min.js';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-function Login({ setAuth }) {
+function Login({ setAuth ,setR}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [vantaEffect, setVantaEffect] = useState(null);
   const backgroundRef = useRef(null);
+  const navigate=useNavigate();
+
   useEffect(() => {
+    if(localStorage.getItem('token')!==null){
+      setAuth(true);
+    }
     if (!vantaEffect) {
       setVantaEffect(
         CLOUDS({
           el: backgroundRef.current,
           THREE:THREE,
           mouseControls: true,
-  touchControls: true,
-  gyroControls: false,
-  minHeight: 200.00,
-  minWidth: 200.00
-          // showDots: false
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00
         })
       );
     }
@@ -40,11 +45,14 @@ function Login({ setAuth }) {
       if (response.data && response.data === `Invalid Access`) {
         setError(response.data);
       } else {
-        const token = response.data;
-        console.log(token);
+        let data = response.data.split(',');
+        let token=data[0];
+        let role=data[1];
         setAuth(true);
+        setR(role);
         localStorage.setItem('token', token);
-        // Redirect or handle successful login here
+        localStorage.setItem('role',role);
+        navigate('/category');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -63,7 +71,7 @@ function Login({ setAuth }) {
           <div className="row">
             <div className="col-12 col-md-6 bsb-tpl-bg-platinum">
             <div className="d-flex flex-column justify-content-between h-50 p-3 p-md-4 p-xl-5">
-                            <img class="img-fluid rounded mx-auto my-4" loading="lazy" src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" width="245" height="80" />
+                            <img className="img-fluid rounded mx-auto my-4" loading="lazy" src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png" width="245" height="80" />
                             {error && 
                             <div className="col-12 alert alert-danger">{error}
                             
