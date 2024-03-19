@@ -3,10 +3,14 @@ import useVantaNetEffect from './NetEffect';
 import axios from 'axios';
 import Select from 'react-select';
 import ScaleLoader from 'react-spinners/ScaleLoader';
+import SuccessAlert from './SuccessAlert';
+import ErrorAlert from './ErrorAlert';
 
 function ProductForm() {
     const [name,setName]=useState('');
     const [description,setDescription]=useState('');
+    const[emsg,setEmsg]=useState('');
+    const[smsg,setSmsg]=useState('');
     const[price,setPrice]=useState(0);
     const vantaRef = useVantaNetEffect();
     const [loading, setLoading] = useState(true);
@@ -47,22 +51,29 @@ function ProductForm() {
                 }
             });
             const productId = response.data.productId;
-            console.log(productId)
             for (const categoryId of selectedCategories) {
                 const linkResponse = await axios.post(`http://localhost:8060/productandcategory/ecommerceapp/api/v1/link/createlink?productId=${productId}&categoryId=${categoryId}`,{},{
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                console.log('Category linked to product:', linkResponse.data);
             }
-            console.log('Category added and linked to products:', response.data);
+            
             setName('');
+            setSmsg("Product Added Successfully")
             setDescription('');
             setPrice(0);
             setSelectedCategories('');
         } catch (error) {
+            setEmsg("Error Adding Product")
             console.error('Error fetching products:', error);
+        }
+        finally{
+            setTimeout(() => {
+              setEmsg('');
+              setSmsg('');
+          }, 3000);
+              return;
         }
     }
 
@@ -92,6 +103,8 @@ function ProductForm() {
                 <>
             <form onSubmit={handleSubmit}>
             <div className="col-md-6 offset-3 justify-content-center p-5 card-body row mt-4 border rounded" style={{background:"#e3f2fd"}}>
+            {emsg && <ErrorAlert msg={emsg}/>}
+                            {smsg && <SuccessAlert msg={smsg}/>}
                     <div className="form-group p-3">
                         <label htmlFor="productname">Product Name</label>
                         <input type="text" className="form-control" id="productname" value={name} placeholder="Enter Product Name" onChange={(e)=>{setName(e.target.value)}}/>

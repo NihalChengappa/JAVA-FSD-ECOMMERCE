@@ -45,6 +45,7 @@ function App() {
           {role==='[ROLE_ADMIN]' && authenticated && <Route path="/products/add-product" element={<ProductForm/>} />}
           {role==='[ROLE_ADMIN]' && authenticated && <Route path="/products/update-product" element={<UpdateProduct/>} />}
           {role==='[ROLE_ADMIN]' && authenticated && <Route path="/products/delete-product" element={<DeleteProduct/>} />}
+          {role==='[ROLE_ADMIN]' && authenticated && <Route path="/add-user" element={<Register/>} />}
           {authenticated && <Route path="/logout" element={<Logout/>} />}
       </Routes>
     </BrowserRouter>

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.blueyonder.productandcategoryservice.entities.Category;
@@ -51,6 +52,7 @@ public class CategoryRepositoryTest {
         when(categoryRepositoryMock.findAll()).thenReturn(testCategorySet);
         Set<Category> foundCategories = categoryService.getAllCategories();
         assertEquals(testCategorySet, foundCategories);
+        Mockito.verify(categoryRepositoryMock).findAll();
     }
 
     @Test
@@ -60,6 +62,7 @@ public class CategoryRepositoryTest {
         when(categoryRepositoryMock.existsByName(categoryName)).thenReturn(true);
         Set<Category> foundCategories = categoryService.findAllByName(categoryName);
         assertEquals(testCategorySet, foundCategories);
+        Mockito.verify(categoryRepositoryMock).findAllByName(categoryName);
     }
 
     @Test
@@ -67,6 +70,7 @@ public class CategoryRepositoryTest {
         String categoryName = "NonexistentCategory";
         when(categoryRepositoryMock.existsByName(categoryName)).thenReturn(false);
         assertThrows(CategoryNotFoundException.class, () -> categoryService.findAllByName(categoryName));
+        Mockito.verify(categoryRepositoryMock).existsByName(categoryName);
     }
 
     @Test
@@ -76,6 +80,7 @@ public class CategoryRepositoryTest {
         when(categoryRepositoryMock.existsByCategoryDescription(categoryDescription)).thenReturn(true);
         Set<Category> foundCategories = categoryService.findAllByCategoryDescription(categoryDescription);
         assertEquals(testCategorySet, foundCategories);
+        Mockito.verify(categoryRepositoryMock).findAllByCategoryDescription(categoryDescription);
     }
 
     @Test
@@ -83,6 +88,7 @@ public class CategoryRepositoryTest {
         String categoryDescription = "NonexistentDescription";
         when(categoryRepositoryMock.existsByCategoryDescription(categoryDescription)).thenReturn(false);
         assertThrows(CategoryNotFoundException.class, () -> categoryService.findAllByCategoryDescription(categoryDescription));
+        Mockito.verify(categoryRepositoryMock).existsByCategoryDescription(categoryDescription);
     }
 
 }

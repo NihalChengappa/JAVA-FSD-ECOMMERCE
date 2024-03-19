@@ -12,10 +12,11 @@ function Register() {
     const [password2, setPassword2] = useState('');
     const[emsg,setEmsg]=useState('');
     const[smsg,setSmsg]=useState('');
+    const[role,setRole]=useState('user');
     const [password2Valid, setPassword2Valid] = useState(false);
     const [vantaEffect, setVantaEffect] = useState(null);
     const backgroundRef = useRef(null);
-
+    const r=localStorage.getItem('role');
     useEffect(() => {
         if (!vantaEffect) {
             setVantaEffect(
@@ -50,7 +51,8 @@ function Register() {
             const response = await axios.post('http://localhost:8060/auth/register', {
                 username,
                 email,
-                password
+                password,
+                role:[role]
             });
             console.log(response.data);
             setUsername("");
@@ -95,13 +97,13 @@ function Register() {
                         </div>
                         <div className="col-12 col-md-6 bsb-tpl-bg-lotion">
                             <div className="p-3 p-md-4 p-xl-5">
-                                <div className="row">
+                                {!r && <div className="row">
                                     <div className="col-12">
                                         <div className="mb-3">
                                             <h3>Register</h3>
                                         </div>
                                     </div>
-                                </div>
+                                </div>}
                                 <form onSubmit={handleSubmit}>
                                     <div className="row gy-3 gy-md-4 overflow-hidden">
                                         <div className="col-12">
@@ -138,6 +140,28 @@ function Register() {
                                                 />
                                             </div>
                                         </div>
+                                        {r === '[ROLE_ADMIN]' && (
+                                            <div className="col-12">
+                                                <label htmlFor="role" className="form-label">
+                                                    Role <span className="text-danger">*</span>
+                                                </label>
+                                                <div className="input-group">
+                                                    <select
+                                                        className="form-select"
+                                                        name="role"
+                                                        id="role"
+                                                        value={role}
+                                                        onChange={(e) => setRole(e.target.value)}
+                                                        required
+                                                    >
+                                                        <option value="">Select Role</option>
+                                                        <option value="admin">ADMIN</option>
+                                                        <option value="user">USER</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        )}
+
                                         <div className="col-12">
                                             <label htmlFor="password" className="form-label">
                                                 Password <span className="text-danger">*</span>

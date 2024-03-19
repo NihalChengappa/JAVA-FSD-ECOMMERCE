@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.blueyonder.productandcategoryservice.entities.Product;
@@ -52,6 +53,7 @@ public class ProductRepositoryTest {
         when(productRepositoryMock.findAll()).thenReturn(testProductSet);
         Set<Product> foundProducts = productService.findAllProducts();
         assertEquals(testProductSet, foundProducts);
+        Mockito.verify(productRepositoryMock).findAll();
     }
 
     @Test
@@ -61,6 +63,7 @@ public class ProductRepositoryTest {
         when(productRepositoryMock.existsByProductName(productName)).thenReturn(true);
         Set<Product> foundProducts = productService.findAllProductsByName(productName);
         assertEquals(testProductSet, foundProducts);
+        Mockito.verify(productRepositoryMock).findAllByProductName(productName);
     }
 
     @Test
@@ -68,6 +71,7 @@ public class ProductRepositoryTest {
         String productName = "NonexistentProduct";
         when(productRepositoryMock.existsByProductName(productName)).thenReturn(false);
         assertThrows(ProductNotFoundException.class, () -> productService.findAllProductsByName(productName));
+        Mockito.verify(productRepositoryMock).existsByProductName(productName);
     }
 
     @Test
@@ -77,6 +81,7 @@ public class ProductRepositoryTest {
         when(productRepositoryMock.existsByProductDescription(productDescription)).thenReturn(true);
         Set<Product> foundProducts = productService.findAllProductsByDescription(productDescription);
         assertEquals(testProductSet, foundProducts);
+        Mockito.verify(productRepositoryMock).findAllByProductDescription(productDescription);
     }
 
     @Test
@@ -84,6 +89,7 @@ public class ProductRepositoryTest {
         String productDescription = "NonexistentDescription";
         when(productRepositoryMock.existsByProductDescription(productDescription)).thenReturn(false);
         assertThrows(ProductNotFoundException.class, () -> productService.findAllProductsByDescription(productDescription));
+        Mockito.verify(productRepositoryMock).existsByProductDescription(productDescription);
     }
 
     @Test
@@ -93,6 +99,7 @@ public class ProductRepositoryTest {
         when(productRepositoryMock.existsByProductPrice(productPrice)).thenReturn(true);
         Set<Product> foundProducts = productService.findAllProductsByPrice(productPrice);
         assertEquals(testProductSet, foundProducts);
+        Mockito.verify(productRepositoryMock).findAllByProductPrice(productPrice);
     }
 
     @Test
@@ -100,6 +107,7 @@ public class ProductRepositoryTest {
         int productPrice = 999;
         when(productRepositoryMock.existsByProductPrice(productPrice)).thenReturn(false);
         assertThrows(ProductNotFoundException.class, () -> productService.findAllProductsByPrice(productPrice));
+        Mockito.verify(productRepositoryMock).existsByProductPrice(productPrice);
     }
 
 }

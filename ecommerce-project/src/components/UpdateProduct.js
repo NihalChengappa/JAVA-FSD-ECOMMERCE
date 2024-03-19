@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import useVantaNetEffect from './NetEffect';
 import axios from 'axios';
+import ScaleLoader from "react-spinners/ScaleLoader";
 import Select from 'react-select';
 
 function UpdateProduct() {
@@ -8,13 +9,34 @@ function UpdateProduct() {
     const [id,setId]=useState('');
     const [description,setDescription]=useState('');
     const vantaRef = useVantaNetEffect();
+    const[emsg,setEmsg]=useState('');
+    const[smsg,setSmsg]=useState('');
     const [price,setPrice]=useState(0);
     const [categories, setCategories] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [selectCategories, setSelectCategories] = useState([]);
     
     useEffect(() => {
-        getCategories();
+        Promise.all([getCategories(), getProducts()]).then(() => {
+            setLoading(false);
+        });
     }, []);
+
+    const getProducts = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:8060/productandcategory/ecommerceapp/api/v1/product/getproducts', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setProducts(response.data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            window.location.href="/logout";
+        }
+    };
 
     const getCategories = async () => {
         try {
@@ -71,27 +93,49 @@ function UpdateProduct() {
         value: category.categoryId,
         label: category.name
     }));
+    const productOptions = products.map(product => ({
+        value: product.productId,
+        label: `${product.productId} (${product.productName})`
+    }));
 
     return (
         <>
-            <div ref={vantaRef} className="vanta-effect" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>
+        <div ref={vantaRef} className="vanta-effect" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }}></div>
+        {loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999 }}>
+                    <ScaleLoader
+                        loading={loading}
+                        size={150}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                    />
+                </div>
+            ) : (
+                <>
             <form onSubmit={handleSubmit}>
             <div className="col-md-6 offset-3 justify-content-center p-5 card-body row mt-3 border rounded" style={{background:"#e3f2fd"}}>
-                    <div className="form-group p-3">
-                        <label htmlFor="productid">Product ID</label>
-                        <input type="text" className="form-control" id="productid" placeholder="Enter Product ID" onChange={(e)=>{setId(e.target.value)}} required/>
+                <div className="form-group p-3">
+                        <label htmlFor="categoryid">Product ID</label>
+                        <Select
+                            options={productOptions}
+                            onChange={(selectedOption) => setId(selectedOption.value)}
+                            value={productOptions.find(option => option.value === id)}
+                            placeholder="Select Product ID"
+                            isSearchable
+                            required
+                        />
                     </div>
                     <div className="form-group p-3">
                         <label htmlFor="productname">Product Name</label>
-                        <input type="text" className="form-control" id="productname" placeholder="Enter Product Name" onChange={(e)=>{setName(e.target.value)}}/>
+                        <input type="text" className="form-control" value={name} id="productname" placeholder="Enter Product Name" onChange={(e)=>{setName(e.target.value)}}/>
                     </div>
                     <div className="form-group p-3">
                         <label htmlFor="productprice">Product Price</label>
-                        <input type="text" className="form-control" id="productprice" placeholder="Enter Product Price" onChange={(e)=>{setPrice(e.target.value)}}/>
+                        <input type="text" className="form-control" value={price} id="productprice" placeholder="Enter Product Price" onChange={(e)=>{setPrice(e.target.value)}}/>
                     </div>
                     <div className="form-group p-3">
                         <label htmlFor="productdescription">Product Description</label>
-                        <input type="text" className="form-control" id="productdescription" onChange={(e)=>{setDescription(e.target.value)}} placeholder="Enter Product Description" />
+                        <input type="text" className="form-control" value={description} id="productdescription" onChange={(e)=>{setDescription(e.target.value)}} placeholder="Enter Product Description" />
                     </div>
                 <div className="form-group p-3">
                         <label className="mr-sm-2" htmlFor="inlineFormCustomSelect">Product to link</label>
@@ -109,8 +153,10 @@ function UpdateProduct() {
                 </div>
                 </div>
             </form>
-        </>
-    );
+            </>
+            )}
+            </>
+    )
 }
 
 export default UpdateProduct;

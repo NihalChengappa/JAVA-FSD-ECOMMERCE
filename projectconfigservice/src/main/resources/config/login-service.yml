@@ -7,7 +7,7 @@ eureka:
   
   client:
     serviceUrl:
-      defaultZone: http://localhost:8061/eureka/
+      defaultZone: http://discoveryservice:8061/eureka/
       
 logging:
   pattern: 

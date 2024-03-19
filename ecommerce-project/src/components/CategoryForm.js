@@ -3,11 +3,15 @@ import useVantaNetEffect from './NetEffect';
 import axios from 'axios';
 import Select from 'react-select';
 import ScaleLoader from "react-spinners/ScaleLoader";
+import ErrorAlert from './ErrorAlert';
+import SuccessAlert from './SuccessAlert';
 
 function CategoryForm() {
     const [name,setName]=useState('');
     const [description,setDescription]=useState('');
     const [loading, setLoading] = useState(true);
+    const[emsg,setEmsg]=useState('');
+    const[smsg,setSmsg]=useState('');
     const vantaRef = useVantaNetEffect();
     const [products, setProducts] = useState([]);
     const [selectProducts, setSelectProducts] = useState([]);
@@ -45,7 +49,6 @@ function CategoryForm() {
                 }
             });
             const categoryId = response.data.categoryId;
-            console.log(categoryId)
             for (const productId of selectProducts) {
                 const linkResponse = await axios.post(`http://localhost:8060/productandcategory/ecommerceapp/api/v1/link/createlink?productId=${productId}&categoryId=${categoryId}`,{},{
                     headers: {
@@ -55,11 +58,20 @@ function CategoryForm() {
                 console.log('Category linked to product:', linkResponse.data);
             }
             console.log('Category added and linked to products:', response.data);
+            setSmsg("Category Added Successfully")
             setName('');
             setDescription('');
             setSelectProducts('');
         } catch (error) {
+            setEmsg("Error Adding Category")
             console.error('Error fetching products:', error);
+        }
+        finally{
+            setTimeout(() => {
+              setEmsg('');
+              setSmsg('');
+          }, 3000);
+              return;
         }
     }
 
@@ -90,6 +102,8 @@ function CategoryForm() {
             
             <form onSubmit={handleSubmit} className="container">
                 <div className="col-md-6 offset-3 justify-content-center p-5 card-body row mt-4 border rounded" style={{background:"#e3f2fd"}}>
+                {emsg && <ErrorAlert msg={emsg}/>}
+                {smsg && <SuccessAlert msg={smsg}/>}
                     <div className="form-group p-3 ">
                         <label htmlFor="categoryname">Category Name</label>
                         <input type="text" className="form-control" value={name} id="categoryname" placeholder="Enter Category Name" onChange={(e) => setName(e.target.value)} />

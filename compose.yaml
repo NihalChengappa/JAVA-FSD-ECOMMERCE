@@ -1,0 +1,85 @@
+networks:
+  ecommerceproject:
+    external: true
+   
+services:
+    config-service:
+      container_name: configservice
+      image: configservice:latest
+      ports:
+        - 8088:8088
+      networks:
+        - ecommerceproject
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://configservice:8088/actuator/health"]
+        interval: 10s
+        timeout: 10s
+        retries: 5
+ 
+    discovery-service:
+      container_name: discoveryservice
+      image: discoveryservice:latest
+      ports:
+        - 8061:8061
+      depends_on:
+        config-service:
+          condition: service_healthy
+      networks:
+        - ecommerceproject
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://discoveryservice:8061/actuator/health"]
+        interval: 10s
+        timeout: 10s
+        retries: 5
+ 
+    gateway-service:
+      container_name: gatewayservice
+      image: gatewayservice:latest
+      ports:
+        - 8060:8060
+      depends_on:
+        discovery-service:
+          condition: service_healthy
+      networks:
+        - ecommerceproject
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://gatewayservice:8060/actuator/health"]
+        interval: 10s
+        timeout: 10s
+        retries: 10
+ 
+    login-service:
+      container_name: authservice
+      image: authservice:latest
+      ports:
+        - 8091:8091
+      depends_on:
+        gateway-service:
+          condition: service_healthy
+      networks:
+        - ecommerceproject
+ 
+ 
+    productcategory-service:
+      container_name: shopservice
+      image: shopservice:latest
+      ports:
+        - 8090:8090
+      depends_on:
+        gateway-service:
+          condition: service_healthy
+      networks:
+        - ecommerceproject
+    ecommerceapp-service:
+      container_name: ecommerceapp
+      image: ecommerceapp:latest
+      ports:
+        - 3000:3000
+      depends_on:
+        gateway-service:
+          condition: service_healthy
+      networks:
+        - ecommerceproject
+ 
+# volumes:
+#   pgdata:
